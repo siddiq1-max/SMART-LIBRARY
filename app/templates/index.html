@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Hero Banner -->
+<div class="row mb-5">
+    <div class="col-12">
+        <!-- Video Hero Banner -->
+        <div class="hero-banner rounded-3 shadow-sm d-flex align-items-center position-relative overflow-hidden"
+            style="min-height: 500px;">
+
+            <!-- Video Background -->
+            <video autoplay muted loop playsinline class="position-absolute w-100 h-100"
+                style="object-fit: cover; top: 0; left: 0; z-index: 0;">
+                <source src="{{ url_for('static', filename='videos/hero_animation.mp4') }}" type="video/mp4">
+            </video>
+
+            <!-- Dark Overlay -->
+            <div class="position-absolute w-100 h-100"
+                style="background: rgba(0,0,0,0.6); top: 0; left: 0; z-index: 1;"></div>
+
+            <!-- Content -->
+            <div class="container position-relative z-2 p-5">
+                <div style="max-width: 700px;">
+                    <span class="badge bg-warning text-dark mb-3 px-3 py-2 fw-bold rounded-pill shadow-sm">CINEMATIC
+                        EXPERIENCE</span>
+                    <h1 class="display-3 fw-bold font-playfair text-white mb-4">Discover Your Next<br>Great Adventure.
+                    </h1>
+                    <p class="lead mb-4 text-white-50">Unlimited access to over 10,000+ premium books. No late fees on
+                        your
+                        first 3 loans.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('user.search_books') }}"
+                            class="btn btn-danger rounded-pill px-5 py-3 fw-bold shadow-lg">Explore Books</a>
+                        {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.register') }}"
+                            class="btn btn-outline-light rounded-pill px-5 py-3 fw-bold">Sign
+                            Up</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recommended Strip -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+        <h3 class="font-playfair fw-bold m-0">Recommended for You</h3>
+        <a href="{{ url_for('user.search_books') }}" class="text-danger text-decoration-none fw-bold small">See All
+            ›</a>
+    </div>
+    <div class="books-carousel">
+        {% for book in recommended %}
+        <div class="book-card-poster" onclick="location.href='{{ url_for('user.book_details', book_id=book.id) }}'">
+            <div class="poster-img-container">
+                {% if book.cover_image %}
+                <img src="{{ book.cover_image }}" alt="{{ book.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <div class="text-muted" style="font-size: 2rem;">📖</div>
+                {% endif %}
+                <div class="poster-badge bg-danger">4.5 ★</div>
+            </div>
+            <div class="poster-body">
+                <div class="poster-title">{{ book.title }}</div>
+                <small class="poster-author">{{ book.author }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Category Pills -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+        <h3 class="font-playfair fw-bold m-0">Browse by Category</h3>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        {% for cat in categories %}
+        <a href="{{ url_for('user.search_books', category=cat) }}"
+            class="btn btn-outline-secondary rounded-pill px-4">{{ cat }}</a>
+        {% endfor %}
+        <a href="{{ url_for('user.search_books') }}" class="btn btn-light rounded-pill px-4">All Categories</a>
+    </div>
+</div>
+
+<!-- New Releases Carousel -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+        <h3 class="font-playfair fw-bold m-0">New Releases</h3>
+        <a href="{{ url_for('user.search_books') }}" class="text-danger text-decoration-none fw-bold small">See All
+            ›</a>
+    </div>
+    <div class="books-carousel">
+        {% for book in new_releases %}
+        <div class="book-card-poster" onclick="location.href='{{ url_for('user.book_details', book_id=book.id) }}'">
+            <div class="poster-img-container">
+                {% if book.cover_image %}
+                <img src="{{ book.cover_image }}" alt="{{ book.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <div class="text-muted" style="font-size: 2rem;">📖</div>
+                {% endif %}
+                <div class="poster-badge bg-primary">NEW</div>
+            </div>
+            <div class="poster-body">
+                <div class="poster-title">{{ book.title }}</div>
+                <small class="poster-author">{{ book.author }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Top Rated Carousel -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+        <h3 class="font-playfair fw-bold m-0">Top Rated</h3>
+        <a href="{{ url_for('user.search_books') }}" class="text-danger text-decoration-none fw-bold small">See All
+            ›</a>
+    </div>
+    <div class="books-carousel">
+        {% for book in top_rated %}
+        <div class="book-card-poster" onclick="location.href='{{ url_for('user.book_details', book_id=book.id) }}'">
+            <div class="poster-img-container">
+                {% if book.cover_image %}
+                <img src="{{ book.cover_image }}" alt="{{ book.title }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <div class="text-muted" style="font-size: 2rem;">📖</div>
+                {% endif %}
+                <div class="poster-badge bg-warning text-dark">BEST</div>
+            </div>
+            <div class="poster-body">
+                <div class="poster-title">{{ book.title }}</div>
+                <small class="poster-author">{{ book.author }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

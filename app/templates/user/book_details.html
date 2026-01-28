@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Book Detail Container -->
+<div class="container py-5">
+    <div class="glass-card p-0 overflow-hidden mb-5">
+        <div class="row g-0">
+            <!-- Poster Section -->
+            <div class="col-md-4 bg-light p-4 d-flex flex-column align-items-center justify-content-center border-end">
+                <div class="book-detail-cover mb-4 position-relative">
+                    {% if book.cover_image %}
+                    <img src="{{ book.cover_image }}" alt="{{ book.title }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-secondary text-white"
+                        style="width: 350px; font-size: 5rem;">📖</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Details Section -->
+            <div class="col-md-8 p-5">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h1 class="font-playfair display-4 fw-bold">{{ book.title }}</h1>
+                    <button class="btn btn-outline-danger rounded-circle p-2" title="Add to Favorites">♥</button>
+                </div>
+                <h4 class="text-muted mb-4">by <span class="text-dark fw-bold">{{ book.author }}</span></h4>
+
+                <!-- Ratings & Stats -->
+                <div class="d-flex align-items-center gap-4 mb-4">
+                    <div class="d-flex align-items-center">
+                        <span class="text-warning fs-3 me-2">★</span>
+                        <span class="fs-4 fw-bold">{{ book.average_rating }}</span>
+                        <span class="text-muted ms-2">({{ book.rating_count }} ratings)</span>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <span class="text-muted d-block small">Category</span>
+                        <span class="fw-bold">{{ book.category }}</span>
+                    </div>
+                    <div class="vr"></div>
+                    <div>
+                        <span class="text-muted d-block small">Language</span>
+                        <span class="fw-bold">{{ book.language or 'English' }}</span>
+                    </div>
+                </div>
+
+                <!-- Seller Info -->
+                {% if book.seller_id %}
+                <div class="alert alert-info d-flex align-items-center mb-4">
+                    <span class="fs-4 me-3">👤</span>
+                    <div>
+                        <span class="d-block text-uppercase small fw-bold">Sold by User</span>
+                        <strong>{{ book.seller.username }}</strong>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Metadata Tags -->
+                <div class="mb-4">
+                    <span class="book-meta-tag">{{ book.pages or 'Unknown' }} Pages</span>
+                    <span class="book-meta-tag">{{ book.publication_year or 'N/A' }}</span>
+                    <span class="book-meta-tag">ISBN: {{ book.isbn }}</span>
+                </div>
+
+                <p class="lead text-muted mb-5">{{ book.description or 'No description available for this title.' }}</p>
+
+                <!-- Actions -->
+                <div class="d-flex align-items-center gap-4 p-4 bg-light rounded-3">
+                    <div>
+                        <small class="text-uppercase fw-bold text-muted d-block mb-1">Price / Fee</small>
+                        <h2 class="mb-0 text-dark">${{ book.price or '0.00' }}</h2>
+                    </div>
+                    <div class="flex-grow-1 text-end">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <form action="{{ url_for('user.reserve_book', book_id=book.id) }}" method="POST">
+                                {% if book.available_count > 0 %}
+                                <button type="submit"
+                                    class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-bold">Borrow</button>
+                                {% else %}
+                                <button type="submit"
+                                    class="btn btn-warning btn-lg rounded-pill px-4 fw-bold">Waitlist</button>
+                                {% endif %}
+                            </form>
+
+                            <form action="{{ url_for('user.buy_book', book_id=book.id) }}" method="POST">
+                                {% if book.quantity > 0 %}
+                                <button type="submit"
+                                    class="btn btn-dark btn-lg rounded-pill px-5 fw-bold shadow-lg">Buy Now</button>
+                                {% else %}
+                                <button disabled class="btn btn-secondary btn-lg rounded-pill px-5 fw-bold">Sold
+                                    Out</button>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Books / Readers Also Liked -->
+    {% if similar_books %}
+    <div class="mb-5">
+        <h3 class="font-playfair fw-bold mb-4">Readers Also Borrowed</h3>
+        <div class="books-carousel">
+            {% for s_book in similar_books %}
+            <div class="book-card-poster"
+                onclick="location.href='{{ url_for('user.book_details', book_id=s_book.id) }}'">
+                <div class="poster-img-container">
+                    {% if s_book.cover_image %}
+                    <img src="{{ s_book.cover_image }}" alt="{{ s_book.title }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div class="text-muted" style="font-size: 2rem;">📖</div>
+                    {% endif %}
+                </div>
+                <div class="poster-body">
+                    <div class="poster-title">{{ s_book.title }}</div>
+                    <small class="poster-author">{{ s_book.author }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Reviews Section (Placeholder for now) -->
+    <div class="row">
+        <div class="col-12">
+            <div class="glass-card p-4">
+                <h3 class="font-playfair fw-bold mb-4">Reviews</h3>
+                <div class="text-center py-5 text-muted">
+                    <p>No reviews yet.</p>
+                    <button class="btn btn-outline-dark">Write a Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

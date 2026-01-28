@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="font-playfair">Admin Dashboard</h1>
+        <p class="text-muted">Overview of library metrics</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Stat Card 1 -->
+    <div class="col-md-3">
+        <div class="glass-card p-4 text-center">
+            <h3 class="display-4 fw-bold">{{ stats.total_books }}</h3>
+            <p class="text-muted mb-0">Total Books</p>
+        </div>
+    </div>
+    <!-- Stat Card 2 -->
+    <div class="col-md-3">
+        <div class="glass-card p-4 text-center">
+            <h3 class="display-4 fw-bold">{{ stats.total_users }}</h3>
+            <p class="text-muted mb-0">Active Users</p>
+        </div>
+    </div>
+    <!-- Stat Card 3 -->
+    <div class="col-md-3">
+        <div class="glass-card p-4 text-center">
+            <h3 class="display-4 fw-bold text-success">{{ stats.issued_books }}</h3>
+            <p class="text-muted mb-0">Books Issued</p>
+        </div>
+    </div>
+    <!-- Stat Card 4 -->
+    <div class="col-md-3">
+        <div class="glass-card p-4 text-center">
+            <h3 class="display-4 fw-bold text-danger">{{ stats.overdue_books }}</h3>
+            <p class="text-muted mb-0">Overdue Books</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="glass-card p-4">
+            <h4 class="font-playfair mb-3">Recent Transactions</h4>
+            {% if transactions %}
+            <ul class="list-group list-group-flush bg-transparent">
+                {% for t in transactions %}
+                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ t.book.title }}</strong><br>
+                        <small class="text-muted">Issued to {{ t.user.username }}</small>
+                    </div>
+                    <span
+                        class="badge bg-{{ 'success' if t.status=='returned' else 'warning' if t.status=='issued' else 'danger' }}">
+                        {{ t.status }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">No recent transactions.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="glass-card p-4">
+            <h4 class="font-playfair mb-3">Quick Actions</h4>
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-dark">Manage Users & Roles</a>
+                <button class="btn btn-outline-dark">System Settings (Coming Soon)</button>
+                <button class="btn btn-outline-dark">Generate Reports (Coming Soon)</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+@

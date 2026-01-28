@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Search Section -->
+<div class="hero-search">
+    <div class="container">
+        <h1 class="font-playfair">Browsing Collections</h1>
+
+        <form method="GET" action="{{ url_for('user.search_books') }}" class="search-container">
+            <input type="text" name="q" class="form-control search-input" placeholder="Search for books, movies, etc"
+                value="{{ request.args.get('q', '') }}">
+            <button type="submit" class="btn btn-dark search-btn">Search</button>
+        </form>
+
+        <div class="collection-nav hide-scrollbar">
+            <a href="{{ url_for('user.search_books') }}"
+                class="collection-link {% if not request.args.get('category') and is_search == False %}active{% endif %}">Home</a>
+            {% for cat in categories %}
+            <a href="{{ url_for('user.search_books', category=cat) }}"
+                class="collection-link {% if request.args.get('category') == cat %}active{% endif %}">{{ cat }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    {% if not is_search %}
+    <!-- Default View: Carousels (BookMyShow Style) -->
+    {% if ordered_books %}
+    {% for category, books in ordered_books.items() %}
+    <div class="category-section">
+        <div class="category-header">
+            <h3 class="category-title">{{ category }}</h3>
+            <a href="{{ url_for('user.search_books', category=category) }}" class="see-all-link">See All ›</a>
+        </div>
+
+        <div class="books-carousel">
+            {% for book in books %}
+            <div class="book-card-poster" onclick="location.href='{{ url_for('user.book_details', book_id=book.id) }}'">
+                <div class="poster-img-container">
+                    {% if book.cover_image %}
+                    <img src="{{ book.cover_image }}" alt="{{ book.title }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div class="text-muted" style="font-size: 2rem;">📖</div>
+                    {% endif %}
+                </div>
+                <div class="poster-body">
+                    <div class="poster-title" title="{{ book.title }}">{{ book.title }}</div>
+                    <small class="poster-author">{{ book.author }}</small>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span
+                            class="status-badge {{ 'bg-light text-success' if book.available_count > 0 else 'bg-light text-danger' }}"
+                            style="font-size: 0.65rem;">
+                            {{ 'Available' if book.available_count > 0 else 'Waitlist' }}
+                        </span>
+                        {% if book.rating %}
+                        <small class="text-warning fw-bold">★ {{ book.rating }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="text-center py-5">
+        <h3 class="text-muted">No collections found.</h3>
+        <p>Try adding some books to the library first.</p>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Search Results Grid View -->
+    <h3 class="font-playfair mb-4">Search Results</h3>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for book in results %}
+        <div class="col">
+            <div class="book-card-poster" onclick="location.href='{{ url_for('user.book_details', book_id=book.id) }}'">
+                <div class="poster-img-container">
+                    {% if book.cover_image %}
+                    <img src="{{ book.cover_image }}" alt="{{ book.title }}"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                    <div class="text-muted" style="font-size: 2rem;">📖</div>
+                    {% endif %}
+                </div>
+                <div class="poster-body">
+                    <div class="poster-title" title="{{ book.title }}">{{ book.title }}</div>
+                    <small class="poster-author">{{ book.author }}</small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <h3 class="font-playfair text-muted">No books found.</h3>
+            <a href="{{ url_for('user.search_books') }}" class="btn btn-outline-dark mt-3">Reset Search</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

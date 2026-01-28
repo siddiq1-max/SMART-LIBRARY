@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="glass-card p-5">
+            <h2 class="font-playfair mb-4 text-center">Sell Your Book</h2>
+            <p class="text-muted text-center mb-5">List your used books for sale in the community marketplace.</p>
+
+            <form method="POST" action="{{ url_for('user.sell_book') }}">
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Book Title</label>
+                    <input type="text" name="title" class="form-control form-control-lg bg-light" required>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Author</label>
+                        <input type="text" name="author" class="form-control bg-light" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">ISBN (Optional)</label>
+                        <input type="text" name="isbn" class="form-control bg-light"
+                            placeholder="For automated cover image">
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Category</label>
+                        <select name="category" class="form-select bg-light">
+                            <option>Fiction</option>
+                            <option>Science Fiction</option>
+                            <option>Business</option>
+                            <option>Technology</option>
+                            <option>Biography</option>
+                            <option>History</option>
+                            <option>Comics</option>
+                            <option>Education</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Price ($)</label>
+                        <input type="number" step="0.01" name="price" class="form-control bg-light" required>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label class="form-label fw-bold">Description / Condition</label>
+                    <textarea name="description" class="form-control bg-light" rows="4"
+                        placeholder="Describe the condition of your book..."></textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-dark btn-lg rounded-pill fw-bold">List Book for Sale</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
